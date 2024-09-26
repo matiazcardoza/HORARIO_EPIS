@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,4 +30,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+//Route::get('courses', 'CourseController@index');
+//Route::post('courses/import', 'CourseController@import');
+
 require __DIR__.'/auth.php';
+
+//Route::get('admin/courses', [CourseController::class, 'index']);
+//Route::post('courses/import', 'CourseController@import');
+
+Route::get('admin/dashboard', [HomeController::class, 'index']);
+
+

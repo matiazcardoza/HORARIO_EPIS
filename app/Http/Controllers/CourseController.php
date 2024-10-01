@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Course;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\CoursesImport;
+use App\Exports\CoursesExport;
+
 
 class CourseController extends Controller
 {
@@ -13,7 +18,7 @@ class CourseController extends Controller
      */
     public function index()
     {
-        return view('admin/dashboard');
+        //return view('admin/dashboard');
     }
 
     /**
@@ -80,5 +85,25 @@ class CourseController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function import(Request $request)
+    {
+        // Validar que el archivo está presente y es de un tipo permitido
+        $request->validate([
+            'document' => 'required|file|mimes:xlsx,xls,csv|max:2048', // Requiere archivo de tipo Excel
+        ]);
+
+        // Obtener el archivo subido
+        $file = $request->file('document');
+
+        // Importar el archivo usando la clase CoursesImport
+        Excel::import(new CoursesImport, $file);
+
+        return redirect()->back()->with('success', 'Archivo importado exitosamente!'); // Redirigir con mensaje de éxito
+    }
+
+    public function export(){
+        return Excel::download(new CoursesExport, 'courses.xlsx');
     }
 }

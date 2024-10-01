@@ -35,9 +35,12 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-//Route::get('admin/courses', [CourseController::class, 'index']);
+//Route::get('admin/dashboard', [CourseController::class, 'index']);
 //Route::post('courses/import', 'CourseController@import');
 
 Route::get('admin/dashboard', [HomeController::class, 'index']);
+//Route::get('courses/import', [CourseContoller::class, 'import']);
+Route::post('courses/import', [CourseController::class, 'import']);
+Route::get('courses/export', [CourseController::class, 'export']);
 
 

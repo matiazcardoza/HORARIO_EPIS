@@ -3,7 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CourseController;
-use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Livewire\ShowCourses;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,7 +22,11 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    if (Auth::user()->usertype == 'admin') {
+        return redirect()->route('admin.dashboard');
+    } else {
+        return view('dashboard'); // Vista para el usuario normal
+    }
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -30,17 +35,22 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware(['auth', 'admin'])->group(function () {
+    //implementacion de ruta livewire
+    //Route::get('/users/tasks', ShowdashboardTasks::class)->name('users/tasks');
+    Route::get('admin/dashboard', ShowCourses::class)->name('admin.dashboard');
+    Route::post('courses/import', [CourseController::class, 'import']);
+    Route::get('courses/export', [CourseController::class, 'export']);
+});
+
 //Route::get('courses', 'CourseController@index');
 //Route::post('courses/import', 'CourseController@import');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 //Route::get('admin/dashboard', [CourseController::class, 'index']);
 //Route::post('courses/import', 'CourseController@import');
 
-Route::get('admin/dashboard', [HomeController::class, 'index']);
-//Route::get('courses/import', [CourseContoller::class, 'import']);
-Route::post('courses/import', [CourseController::class, 'import']);
-Route::get('courses/export', [CourseController::class, 'export']);
-
-
+//Route::get('admin/dashboard', [HomeController::class, 'index']);
+//Route::post('courses/import', [CourseController::class, 'import']);
+//Route::get('courses/export', [CourseController::class, 'export']);

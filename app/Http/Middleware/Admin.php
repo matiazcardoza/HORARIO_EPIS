@@ -21,7 +21,7 @@ class Admin
         if (Auth::user()->usertype != 'admin') {
             return redirect('dashboard');
         }
-        
+
         return $next($request);
     }
 }

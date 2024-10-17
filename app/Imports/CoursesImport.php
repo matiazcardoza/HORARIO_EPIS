@@ -5,14 +5,15 @@ namespace App\Imports;
 use App\Models\Course;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use App\Models\Docente;
 
 class CoursesImport implements ToModel, WithHeadingRow
 {
     /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
+     * @param array $row
+     *
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
     public function model(array $row)
     {
         // Ignorar la fila de encabezados
@@ -20,7 +21,15 @@ class CoursesImport implements ToModel, WithHeadingRow
             return; // Ignorar la fila de encabezados
         }
 
-        //dd($row);
+        // Verificar si el docente ya existe en la base de datos
+        $docente = Docente::where('nombre_docente', $row['apellidos_y_nombres_del_docente'])->first();
+
+        // Si el docente no existe, lo creamos y asignamos el código automáticamente
+        // Verificar si el docente ya existe en la base de datos
+        $docente = Docente::firstOrCreate(
+            ['nombre_docente' => $row['apellidos_y_nombres_del_docente']],
+            ['codigo_docente' => str_pad(Docente::max('id') + 1, 6, '0', STR_PAD_LEFT)] // Asignar código si no existe
+        );
 
         return new Course([
             'codigo_curso' => $row['codigo_del_curso'],

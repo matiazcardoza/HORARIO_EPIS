@@ -26,4 +26,10 @@ class Course extends Model
         'jueves',
         'viernes'
     ];
+
+    // Relación con el modelo Docente usando el nombre
+    public function docente()
+    {
+        return $this->belongsTo(Docente::class, 'docente', 'nombre_docente');
+    }
 }

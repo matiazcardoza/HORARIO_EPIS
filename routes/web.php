@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CourseController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Livewire\ShowCourses;
+use App\Http\Livewire\Docentes;
+use App\Http\Livewire\AddDocente;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,8 +41,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     //implementacion de ruta livewire
     //Route::get('/users/tasks', ShowdashboardTasks::class)->name('users/tasks');
     Route::get('admin/dashboard', ShowCourses::class)->name('admin.dashboard');
+    Route::get('admin/docente', Docentes::class)->name('admin.docente');
     Route::post('courses/import', [CourseController::class, 'import']);
     Route::get('courses/export', [CourseController::class, 'export']);
+    Route::get('/admin/add-docente', AddDocente::class)->name('admin.add-docente');
 });
 
 //Route::get('courses', 'CourseController@index');

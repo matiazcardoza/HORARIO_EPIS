@@ -33,6 +33,10 @@
                     </div>
                 </div>
 
+                <a href="{{ route('admin.add-docente') }}" class="bg-blue-500 text-white px-4 py-2 rounded">
+                    Agregar Nuevo Docente
+                </a>
+
                 <div class="py-12 px-12">
                     @livewire('calendar')
                 </div>

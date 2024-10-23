@@ -8,6 +8,8 @@ use App\Models\Course;
 class ShowCourses extends Component
 {
     public $courses;
+    public $docentes = [];
+    public $aulas = [];
 
     public function mount()
     {

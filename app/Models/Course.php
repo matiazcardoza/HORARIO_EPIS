@@ -32,4 +32,8 @@ class Course extends Model
     {
         return $this->belongsTo(Docente::class, 'docente', 'nombre_docente');
     }
+    public function docentePorCodigo()
+    {
+        return $this->belongsTo(Docente::class, 'docente', 'codigo_docente');
+    }
 }

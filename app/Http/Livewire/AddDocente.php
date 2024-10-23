@@ -5,7 +5,8 @@ namespace App\Http\Livewire;
 use Livewire\Component;
 use App\Models\Docente;
 use App\Models\Course;
-use Illuminate\Support\Facades\DB; // Agregar para manejar transacciones
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AddDocente extends Component
 {
@@ -13,6 +14,7 @@ class AddDocente extends Component
     public $codigo_docente;
     public $selectedCourses = []; // Cursos seleccionados sin docente
     public $coursesWithoutDocente = []; // Cursos sin docente
+    public $showModal = false;
 
     protected $rules = [
         'nombre_docente' => 'required|string|max:255',
@@ -29,36 +31,58 @@ class AddDocente extends Component
 
     public function addDocente()
     {
-        // Validar los datos de entrada
         $this->validate();
 
-        DB::beginTransaction(); // Iniciar una transacción para asegurar consistencia
+
+        // Iniciar transacción
+        DB::beginTransaction();
 
         try {
-            // Crear el nuevo docente en la tabla 'docentes'
-            $docente = Docente::firstOrCreate(
-                ['nombre_docente' => $this->nombre_docente],
-                ['codigo_docente' => $this->codigo_docente]
-            );
+            // Crear el nuevo docente
+            $docente = Docente::create([
+                'nombre_docente' => $this->nombre_docente,
+                'codigo_docente' => $this->codigo_docente,
+            ]);
 
-            // Actualizar los cursos seleccionados en la tabla 'courses'
-            Course::whereIn('id', $this->selectedCourses)->update(['docente' => $docente->nombre_docente]);
+            if (!$docente) {
+                throw new \Exception('No se pudo crear el docente.');
+            }
 
-            DB::commit(); // Confirmar transacción si todo sale bien
+            // Actualizar los cursos seleccionados con el nuevo docente
+            if ($this->selectedCourses) {
+                Course::whereIn('id', $this->selectedCourses)
+                    ->update(['docente' => $docente->nombre_docente]);
+            }
 
-            // Emitir un evento para Livewire que actualice la lista de docentes
+            // Confirmar la transacción
+            DB::commit();
+
+            // Emitir un evento para actualizar la lista de docentes
             $this->emit('docenteAdded');
 
             // Mostrar un mensaje de éxito
             session()->flash('message', 'Docente creado y asignado a los cursos seleccionados correctamente.');
-
-            // Resetear el formulario y refrescar la lista de cursos sin docente
+        } catch (\Exception $e) {
+            // Si hay un error, deshacer la transacción
+            DB::rollBack();
+            session()->flash('error', 'Error al crear el docente: ' . $e->getMessage());
+        } finally {
+            // Resetear el formulario y refrescar la lista de cursos
             $this->reset(['nombre_docente', 'codigo_docente', 'selectedCourses']);
             $this->coursesWithoutDocente = Course::where('docente', 'Sin Docente')->get();
-        } catch (\Exception $e) {
-            DB::rollBack(); // Revertir cambios si algo falla
-            session()->flash('error', 'Error al crear el docente: ' . $e->getMessage());
         }
+    }
+
+    protected $listeners = ['docenteAdded' => 'closeModal', 'docenteDeleted' => 'refreshCourses'];
+
+    public function closeModal()
+    {
+        $this->showModal = false;
+    }
+
+    public function refreshCourses()
+    {
+        $this->coursesWithoutDocente = Course::where('docente', 'Sin Docente')->get();
     }
 
     public function render()

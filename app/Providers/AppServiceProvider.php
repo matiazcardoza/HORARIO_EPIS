@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,5 +27,12 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
+
+        // Registrar todas las consultas SQL en los logs
+        DB::listen(function ($query) {
+            Log::info("Consulta SQL: " . $query->sql);
+            Log::info("Bindings: " . implode(", ", $query->bindings));
+            Log::info("Tiempo de ejecución: " . $query->time . " ms");
+        });
     }
 }

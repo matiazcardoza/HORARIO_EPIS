@@ -9,10 +9,13 @@
 
 
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'HORARIOEPIS') }}</title>
 
     <!-- Fonts -->
     <!-- Cargar los archivos CSS y JS de Vite -->
+
+
+
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -26,14 +29,18 @@
     @livewireStyles
 </head>
 
-<body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-        @include('layouts.navigation')
-
+<body class="font-sans antialiased"id="global">
+    <div class="min-h-screen bg-gray-100 dark:bg-gray-900  bg-blue-100" id="global">
+        @if (auth()->check() && auth()->user()->usertype == 'admin')
+            @include('layouts.navigation')
+        @elseif (auth()->check() && auth()->user()->usertype == 'user')
+            @include('layouts.navigation')
+        @else
+        @endif
         <!-- Page Heading -->
         @if (isset($header))
-            <header class="bg-white dark:bg-gray-800 shadow">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <header class="bg-green-400 dark:bg-gray-100">
+                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 ">
                     {{ $header }}
                 </div>
             </header>

@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Livewire\ShowCourses;
 use App\Http\Livewire\Docentes;
 use App\Http\Livewire\AddDocente;
+use App\Http\Livewire\AddEvent;
+use App\Http\Livewire\EditEvent;
 
 /*
 |--------------------------------------------------------------------------

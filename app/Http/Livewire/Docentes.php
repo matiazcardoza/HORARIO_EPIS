@@ -62,6 +62,8 @@ class Docentes extends Component
         $docente = Docente::find($this->selectedDocenteId);
         $remainingCourses = Course::where('docente', $docente->nombre_docente)->count();
 
+        $this->emit('docenteDeleted');
+
         // Si no tiene más cursos, eliminar al docente
         if ($remainingCourses === 0) {
             $docente->delete();
@@ -77,11 +79,16 @@ class Docentes extends Component
 
     public function render()
     {
-        // Obtener los docentes filtrados por nombre
-        $docentes = Docente::where('nombre_docente', 'like', '%' . $this->search . '%')->paginate(10);
+        // Obtener los docentes filtrados y ordenados por nombre
+        $docentes = Docente::query()
+            ->where('nombre_docente', 'like', '%' . $this->search . '%')
+            ->orWhere('codigo_docente', 'like', '%' . $this->search . '%')
+            ->orderBy('nombre_docente', 'asc') // Ordenar alfabéticamente por nombre
+            ->paginate(10);
 
         return view('livewire.docente', ['docentes' => $docentes]);
     }
+
 
     protected $listeners = ['docenteUpdated' => '$refresh', 'confirmDelete'];
 }

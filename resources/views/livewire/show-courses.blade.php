@@ -15,7 +15,7 @@
                 <div class="px-12">
                     @livewire('calendar')
                 </div>
-                <div class="container mx-auto p-2">
+                <div class="container mx-auto p-2" id="selector">
                     <!-- Espaciado superior -->
                     <div
                         class="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-2">
